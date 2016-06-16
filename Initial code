@@ -10,16 +10,22 @@
 
 int main()
 {
-    double variableOne, variableTwo;
-    char function;
+    int functionLocation,i;
+    double variableOne, variableTwo,variableThree;
+    char function,input[100], *parsed;
 
-    printf("Calculator. Please enter the function you wish to use.\n(-,+,/,*).\n");
-    scanf("%c",&function);
-    printf("Please enter the first number.");
-    scanf("%lf",&variableOne);
-    printf("Please enter the second number.");
-    scanf("%lf",&variableTwo);
+    //get user input
+    printf("Calculator. Please enter the equation.\n");
+    fgets(input,sizeof(input),stdin);
 
+    //determine first number, determine function, determine second number
+
+    variableOne=strtod(input,&parsed);
+    function=parsed[0];
+    parsed++;
+    variableTwo=strtod(parsed,&parsed);
+    
+    //Outputs the required equations to the screen
     switch(function)
     {
     case '+': printf("%lf\n",variableOne+variableTwo); break;
@@ -31,3 +37,4 @@ int main()
 
 return(0);
 }
+

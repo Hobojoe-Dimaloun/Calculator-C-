@@ -1,0 +1,33 @@
+
+/* *****************
+* Basic calculator
+* (-+/*)
+*******************/
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int main()
+{
+    double variableOne, variableTwo;
+    char function;
+
+    printf("Calculator. Please enter the function you wish to use.\n(-,+,/,*).\n");
+    scanf("%c",&function);
+    printf("Please enter the first number.");
+    scanf("%lf",&variableOne);
+    printf("Please enter the second number.");
+    scanf("%lf",&variableTwo);
+
+    switch(function)
+    {
+    case '+': printf("%lf\n",variableOne+variableTwo); break;
+    case '-': printf("%lf\n",variableOne-variableTwo); break;
+    case '*': printf("%lf\n",variableOne*variableTwo); break;
+    case '/': if(variableTwo!=0){printf("%f\n",variableOne/variableTwo);} break;
+    default : printf("Inputs not recognised.\n");
+    }
+
+return(0);
+}

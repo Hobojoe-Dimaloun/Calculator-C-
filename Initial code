@@ -9,9 +9,9 @@
 
 int main()
 {
-    int functionLocation,i, Counter;
+    int functionLocation,i, Counter,fCounter=0;
     double *variables;
-    char function,input[100], *parsed,Test;
+    char function[20],input[100], *parsed,Test;
     //allow variable number of inputs
 
     if((variables=malloc(2*sizeof(double)))==NULL)
@@ -27,24 +27,31 @@ int main()
     //determine first number, determine function, determine second number
     Counter=0;
     parsed=input;
-    while(Test!='\n' || Test!=EOF)
+    while((Test=*parsed)!='\n' && Test!=EOF)
     {
-        if(isdigit(parsed))
+        if(isdigit(*parsed))
         {
+            printf("hi\n");
             variables[Counter]=strtod(parsed,&parsed);
+            printf("number:%lf\n",variables[Counter]);
+            Counter++;
             if((realloc(variables,sizeof(variables)+sizeof(double)))==NULL)
                {
+                   free(variables);
                    return(1);
                }
         }
         else
         {
+
+            function[fCounter]=*parsed;
+            fCounter++;
             parsed++;
         }
     }
 
     //Outputs the required equations to the screen
-    switch(function)
+    switch(function[0])
     {
     case '+': printf("%e\n",variables[0]+variables[1]); break;
     case '-': printf("%e\n",variables[0]-variables[1]); break;
@@ -52,7 +59,7 @@ int main()
     case '/': if(variables[1]!=0){printf("%f\n",variables[0]/variables[1]);} break;
     default : printf("Inputs not recognised.\n");
     }
-
+free(variables);
 return(0);
 }
 

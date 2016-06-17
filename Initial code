@@ -7,14 +7,42 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+int inputParser(double **digitArray, char **mathsFunctionArray);
+
 int main()
 {
     int functionLocation,i, Counter=0,fCounter=0,vCounter=0;
     double *variables=NULL;
     char *function=NULL,input[100], *parsed,Test;
-    //allow variable number of inputs
+    //allow variable number of input
 
-    if((variables=calloc(1,sizeof(double)))==NULL)
+    if(inputParser(&variables,&function)!=0)
+    {
+        return(1);
+    }
+    //get user input
+
+    //Outputs the required equations to the screen
+    switch(function[0])
+    {
+        case '+': printf("%e\n",variables[0]+variables[1]); break;
+        case '-': printf("%e\n",variables[0]-variables[1]); break;
+        case '*': printf("%e\n",variables[0]*variables[1]); break;
+        case '/': if(variables[1]!=0){printf("%f\n",variables[0]/variables[1]);} else{ printf("Divide by zero\n");}break;
+        default : printf("Inputs not recognised.\n"); break;
+    }
+free(variables);
+free(function);
+
+return(0);
+}
+
+int inputParser(double **digitArray, char **mathsFunctionArray)
+{
+    int Counter=0,fCounter=0,vCounter=0;
+    double *variables=NULL;
+    char *function=NULL,input[100], *parsed,Test;
+     if((variables=calloc(1,sizeof(double)))==NULL)
     {
         printf("Memory allocation failed - Variables");
         return(1);
@@ -23,8 +51,8 @@ int main()
     {
         printf("Memory allocation failed - Functions");
         return(1);
-    }
 
+    }
 
     //get user input
     printf("Calculator. Please enter the equation.\n");
@@ -60,6 +88,7 @@ int main()
                }
 
             // Switch used to prevent entries which are not mathematical functions.
+            function[fCounter]=*parsed;
 
             switch(function[fCounter])
             {
@@ -70,8 +99,7 @@ int main()
             case '^':
             case '(':
             case ')': fCounter++; parsed++; break;
-            default:
-                {
+            default:{
                 printf("Invalid entry.\n");
                 free(function);
                 free(variables);
@@ -82,17 +110,8 @@ int main()
         }
     }
 
-    //Outputs the required equations to the screen
-    switch(function[0])
-    {
-        case '+': printf("%e\n",variables[0]+variables[1]); break;
-        case '-': printf("%e\n",variables[0]-variables[1]); break;
-        case '*': printf("%e\n",variables[0]*variables[1]); break;
-        case '/': if(variables[1]!=0){printf("%f\n",variables[0]/variables[1]);} else{ printf("Divide by zero\n");}break;
-        default : printf("Inputs not recognised.\n"); break;
-    }
-free(variables);
-free(function);
 
-return(0);
+    *digitArray=variables;
+    *mathsFunctionArray=function;
+    return(0);
 }

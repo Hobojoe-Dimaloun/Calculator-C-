@@ -29,11 +29,11 @@ int main()
     parsed=input;
     while((Test=*parsed)!='\n' && Test!=EOF)
     {
+        // Determines if character is a digit, if yes it converts the digits into a number.
+        // If no it stores the character in a new array.
         if(isdigit(*parsed))
         {
-            printf("hi\n");
             variables[Counter]=strtod(parsed,&parsed);
-            printf("number:%lf\n",variables[Counter]);
             Counter++;
             if((realloc(variables,sizeof(variables)+sizeof(double)))==NULL)
                {

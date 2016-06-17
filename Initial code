@@ -51,7 +51,6 @@ int main()
         }
         else
         {
-            printf("%d\n",fCounter);
             if((function=realloc(function,fCounter*sizeof(char)+sizeof(char)))==NULL)
                {
                    printf("Memory reallocation failed - Functions");
@@ -60,13 +59,38 @@ int main()
                    return(1);
                }
 
-            function[fCounter]=*parsed;
-            fCounter++;
-            parsed++;
+            // Switch used to prevent entries which are not mathematical functions.
+
+            switch(function[fCounter])
+            {
+            case '+':
+            case '-':
+            case '/':
+            case '*':
+            case '^':
+            case '(':
+            case ')': fCounter++; parsed++; break;
+            default:
+                {
+                printf("Invalid entry.\n");
+                free(function);
+                free(variables);
+                return(1);
+                break;
+                }
+            }
         }
     }
 
-
+    //Outputs the required equations to the screen
+    switch(function[0])
+    {
+        case '+': printf("%e\n",variables[0]+variables[1]); break;
+        case '-': printf("%e\n",variables[0]-variables[1]); break;
+        case '*': printf("%e\n",variables[0]*variables[1]); break;
+        case '/': if(variables[1]!=0){printf("%f\n",variables[0]/variables[1]);} else{ printf("Divide by zero\n");}break;
+        default : printf("Inputs not recognised.\n"); break;
+    }
 free(variables);
 free(function);
 

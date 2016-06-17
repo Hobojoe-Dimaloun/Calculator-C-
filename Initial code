@@ -9,13 +9,19 @@
 
 int main()
 {
-    int functionLocation,i, Counter,fCounter=0;
-    double *variables;
-    char function[20],input[100], *parsed,Test;
+    int functionLocation,i, Counter=0,fCounter=0,vCounter=0;
+    double *variables=NULL;
+    char *function=NULL,input[100], *parsed,Test;
     //allow variable number of inputs
 
-    if((variables=malloc(2*sizeof(double)))==NULL)
+    if((variables=calloc(1,sizeof(double)))==NULL)
     {
+        printf("Memory allocation failed - Variables");
+        return(1);
+    }
+    if((function=calloc(1,sizeof(char)))==NULL)
+    {
+        printf("Memory allocation failed - Functions");
         return(1);
     }
 
@@ -25,24 +31,34 @@ int main()
     fgets(input,sizeof(input),stdin);
 
     //determine first number, determine function, determine second number
-    Counter=0;
     parsed=input;
-    while((Test=*parsed)!='\n' && Test!=EOF)
+    while((Test=*parsed)!='\n' && Test!=EOF && (vCounter<100))
     {
+        vCounter++;
         // Determines if character is a digit, if yes it converts the digits into a number.
-        // If no it stores the character in a new array.
+        // If no it stores the character in a separate array.
         if(isdigit(*parsed))
         {
             variables[Counter]=strtod(parsed,&parsed);
             Counter++;
-            if((realloc(variables,sizeof(variables)+sizeof(double)))==NULL)
+            if((variables=realloc(variables,Counter*(sizeof(double))+sizeof(double)))==NULL)
                {
+                   printf("Memory reallocation failed - Variables");
                    free(variables);
+                   free(function);
                    return(1);
                }
         }
         else
         {
+            printf("%d\n",fCounter);
+            if((function=realloc(function,fCounter*sizeof(char)+sizeof(char)))==NULL)
+               {
+                   printf("Memory reallocation failed - Functions");
+                   free(function);
+                   free(variables);
+                   return(1);
+               }
 
             function[fCounter]=*parsed;
             fCounter++;
@@ -50,16 +66,9 @@ int main()
         }
     }
 
-    //Outputs the required equations to the screen
-    switch(function[0])
-    {
-    case '+': printf("%e\n",variables[0]+variables[1]); break;
-    case '-': printf("%e\n",variables[0]-variables[1]); break;
-    case '*': printf("%e\n",variables[0]*variables[1]); break;
-    case '/': if(variables[1]!=0){printf("%f\n",variables[0]/variables[1]);} break;
-    default : printf("Inputs not recognised.\n");
-    }
+
 free(variables);
+free(function);
+
 return(0);
 }
-

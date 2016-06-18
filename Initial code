@@ -7,41 +7,50 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int inputParser(double **digitArray, char **mathsFunctionArray);
+int inputParser(double **digitArray, char **mathsFunctionArray,int *fCounter);
 
 int main()
 {
-    int functionLocation,i, Counter=0,fCounter=0,vCounter=0;
-    double *variables=NULL;
+    int functionLocation,i, Counter=0,*fCounter=NULL,FCOUNTER,vCounter=0;
+    double *variables=NULL, answer;
     char *function=NULL,input[100], *parsed,Test;
+
+    fCounter=&FCOUNTER;
     //allow variable number of input
 
-    if(inputParser(&variables,&function)!=0)
+
+
+    if(inputParser(&variables,&function,fCounter)!=0)
     {
         return(1);
     }
     //get user input
-
-    //Outputs the required equations to the screen
-    switch(function[0])
+    //Outputs the required quations to the screen
+    answer=variables[0];
+    for(i=0;i<(*fCounter);i++)
     {
-        case '+': printf("%e\n",variables[0]+variables[1]); break;
-        case '-': printf("%e\n",variables[0]-variables[1]); break;
-        case '*': printf("%e\n",variables[0]*variables[1]); break;
-        case '/': if(variables[1]!=0){printf("%f\n",variables[0]/variables[1]);} else{ printf("Divide by zero\n");}break;
-        default : printf("Inputs not recognised.\n"); break;
+        switch(function[i])
+        {
+            case '+': answer+=variables[i+1]; break;
+            case '-': answer-=variables[i+1]; break;
+            case '*': answer=answer*variables[i+1];break;
+            case '/': if(variables[1]!=0){answer=answer/variables[i+1];} else{ printf("Divide by zero error\n"); free(variables); free(function); return(1);}break;
+            default : printf("Inputs not recognised.\n"); break;
+        }
     }
+printf("%lf\n",answer);
 free(variables);
 free(function);
 
 return(0);
 }
 
-int inputParser(double **digitArray, char **mathsFunctionArray)
+int inputParser(double **digitArray, char **mathsFunctionArray,int *functionCounter)
 {
-    int Counter=0,fCounter=0,vCounter=0;
+    int Counter=0,vCounter=0,fCounter=0;
     double *variables=NULL;
     char *function=NULL,input[100], *parsed,Test;
+    fCounter=0;
      if((variables=calloc(1,sizeof(double)))==NULL)
     {
         printf("Memory allocation failed - Variables");
@@ -60,9 +69,8 @@ int inputParser(double **digitArray, char **mathsFunctionArray)
 
     //determine first number, determine function, determine second number
     parsed=input;
-    while((Test=*parsed)!='\n' && Test!=EOF && (vCounter<100))
+    while((Test=*parsed)!='\n' && Test!=EOF )
     {
-        vCounter++;
         // Determines if character is a digit, if yes it converts the digits into a number.
         // If no it stores the character in a separate array.
         if(isdigit(*parsed))
@@ -110,7 +118,7 @@ int inputParser(double **digitArray, char **mathsFunctionArray)
         }
     }
 
-
+    *functionCounter=fCounter;
     *digitArray=variables;
     *mathsFunctionArray=function;
     return(0);

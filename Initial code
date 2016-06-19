@@ -1,125 +1,231 @@
-/* *****************
-* Basic calculator
-* (-+/*)
-*******************/
+/* **********************************
+* Author:   Michael O'Donnell 
+*           mo14776@my.bristol.ac.uk
+*
+*   Basic calculator
+*   (+-/*^)
+*************************************/
+
+
+
+
 
 
 #include <stdio.h>
 #include <stdlib.h>
-
-int inputParser(double **digitArray, char **mathsFunctionArray,int *fCounter);
+#include <math.h>
 
 int main()
 {
-    int functionLocation,i, Counter=0,*fCounter=NULL,FCOUNTER,vCounter=0;
-    double *variables=NULL, answer;
-    char *function=NULL,input[100], *parsed,Test;
+    /* **********
+    *   BIDMAS Precedence
+    *
+    *   Brackets-1
+    *   Indices-2
+    *   Division-3
+    *   Multiplication-3
+    *   Addition-4
+    *   Subtraction-4
+    **********************/
 
-    fCounter=&FCOUNTER;
-    //allow variable number of input
 
+    char input[100],stack[100], functionOutput[100], *inputString;
 
-
-    if(inputParser(&variables,&function,fCounter)!=0)
+    printf("Enter equation\n");
+    fgets(input, sizeof(input),stdin);
+    double numberOutput[100], working[2];
+    int numberOutputCounter=0;
+    int functionOutputCounter=0;
+    int stackCounter=0;
+    int hold;
+    inputString=input;
+    while(*inputString!='\n' && *inputString!='\0')
     {
-        return(1);
-    }
-    //get user input
-    //Outputs the required quations to the screen
-    answer=variables[0];
-    for(i=0;i<(*fCounter);i++)
-    {
-        switch(function[i])
+        if(isdigit(*inputString))
         {
-            case '+': answer+=variables[i+1]; break;
-            case '-': answer-=variables[i+1]; break;
-            case '*': answer=answer*variables[i+1];break;
-            case '/': if(variables[1]!=0){answer=answer/variables[i+1];} else{ printf("Divide by zero error\n"); free(variables); free(function); return(1);}break;
-            default : printf("Inputs not recognised.\n"); break;
-        }
-    }
-printf("%lf\n",answer);
-free(variables);
-free(function);
-
-return(0);
-}
-
-int inputParser(double **digitArray, char **mathsFunctionArray,int *functionCounter)
-{
-    int Counter=0,vCounter=0,fCounter=0;
-    double *variables=NULL;
-    char *function=NULL,input[100], *parsed,Test;
-    fCounter=0;
-     if((variables=calloc(1,sizeof(double)))==NULL)
-    {
-        printf("Memory allocation failed - Variables");
-        return(1);
-    }
-    if((function=calloc(1,sizeof(char)))==NULL)
-    {
-        printf("Memory allocation failed - Functions");
-        return(1);
-
-    }
-
-    //get user input
-    printf("Calculator. Please enter the equation.\n");
-    fgets(input,sizeof(input),stdin);
-
-    //determine first number, determine function, determine second number
-    parsed=input;
-    while((Test=*parsed)!='\n' && Test!=EOF )
-    {
-        // Determines if character is a digit, if yes it converts the digits into a number.
-        // If no it stores the character in a separate array.
-        if(isdigit(*parsed))
-        {
-            variables[Counter]=strtod(parsed,&parsed);
-            Counter++;
-            if((variables=realloc(variables,Counter*(sizeof(double))+sizeof(double)))==NULL)
-               {
-                   printf("Memory reallocation failed - Variables");
-                   free(variables);
-                   free(function);
-                   return(1);
-               }
+            numberOutput[numberOutputCounter]=strtod(inputString,&inputString);
+            numberOutputCounter++;
         }
         else
         {
-            if((function=realloc(function,fCounter*sizeof(char)+sizeof(char)))==NULL)
-               {
-                   printf("Memory reallocation failed - Functions");
-                   free(function);
-                   free(variables);
-                   return(1);
-               }
-
-            // Switch used to prevent entries which are not mathematical functions.
-            function[fCounter]=*parsed;
-
-            switch(function[fCounter])
+            switch(*inputString)
             {
-            case '+':
-            case '-':
+            case '(': stack[stackCounter]=*inputString; stackCounter++; break;       //Assign input and move to new empty input
+
+            case ')':{  if(stackCounter>0)                                                  //Prevents stack underflow
+                        {
+                            stackCounter--;                                                 //Return counter to the last input
+                            while(stack[stackCounter]!='(')
+                            {
+                                functionOutput[functionOutputCounter]=stack[stackCounter];                  //Pop top input onto output stack and advance output stack
+                                functionOutputCounter++;
+                                if(stackCounter>=0)                                         //Prevents underflow of stack
+                                {
+                                    stackCounter--;                                         //Current input has been popped, therefore advance back one step to previous input
+                                }
+                                else{ printf("Non-Paired brackets.\n");break;}
+                            }
+
+                            break;                                                          //If '(' is encountered the stack counter does not move. Allows overwrite of '('
+                        }
+                        else{stack[stackCounter]=*inputString; stackCounter++; break;}
+                    }
+
+
+            case '^':stack[stackCounter]=*inputString; stackCounter++; break;       //Assign input and move to new empty input
+
             case '/':
-            case '*':
-            case '^':
-            case '(':
-            case ')': fCounter++; parsed++; break;
-            default:{
-                printf("Invalid entry.\n");
-                free(function);
-                free(variables);
-                return(1);
-                break;
-                }
+            case '*':{
+                        if(stackCounter>0)                                                  //Prevents stack underflow
+                        {
+                            stackCounter--;                                                 //Return counter to the last input
+                            switch(stack[stackCounter])
+                            {
+                            case '-':
+                            case '+':{
+                                        stackCounter++;                                     //Advance Counter to empty cell
+                                        stack[stackCounter]=*inputString;            //Input into cell and advance
+                                        stackCounter++;
+                                        break;
+                                     }
+                            case '*':
+                            case '/':
+                            case '^':{                                                      //equal precedence and left associative
+                                        functionOutput[functionOutputCounter]=stack[stackCounter];          //Pop '/' to output and advance output counter
+                                        functionOutputCounter++;
+                                        stack[stackCounter]=*inputString;            //Push '/' onto stack and advance stack Counter
+                                        stackCounter++;
+                                        break;
+                                     }
+                            default : ;stack[stackCounter]=*inputString; stackCounter++; break;
+                            }
+
+                        }
+                        else{stack[stackCounter]=*inputString; stackCounter++; break;}
+                        break;
+                    }
+            case '+':
+            case '-': {
+                        if(stackCounter>0)                                                  //Prevents stack underflow
+                        {
+                            stackCounter--;                                                 //Return counter to the last input
+                            switch(stack[stackCounter])
+                            {
+                            case '-':
+                            case '+':
+                            case '*':
+                            case '/':
+                            case '^':{
+                                        functionOutput[functionOutputCounter]=stack[stackCounter];          //Pop '*' to output and advance output counter
+                                        functionOutputCounter++;
+                                        stack[stackCounter]=*inputString;                    //Push '/' onto stack and advance stack Counter
+                                        stackCounter++;
+                                        break;
+                                     }
+                            default : stackCounter++;stack[stackCounter]=*inputString; stackCounter++; break;
+                            }
+
+                        }
+                        else{stack[stackCounter]=*inputString; stackCounter++; break;}
+                        break;
+                    }
+            default : break;
+
+
+            }
+            inputString++;                                                              // advances the input string pointer to the next character
+        }
+
+        while(functionOutputCounter>0)
+        {
+            functionOutputCounter--;                                                // selects last function to be entered
+            numberOutputCounter--;                                                  // selects last number to be entered
+            working[1]=numberOutput[numberOutputCounter];
+            numberOutputCounter--;
+            working[0]=numberOutput[numberOutputCounter];
+
+            switch(functionOutput[functionOutputCounter])
+            {
+            case '+':{
+                        numberOutput[numberOutputCounter]=working[0]+working[1];        // overwrites the number and advances 1. equivalent of popping 2 off the stack and pushing one on.
+                        numberOutputCounter++;
+                        break;
+                    }
+            case '-':{
+                        numberOutput[numberOutputCounter]=working[0]-working[1];        // overwrites the number and advances 1. equivalent of popping 2 off the stack and pushing one on.
+                        numberOutputCounter++;
+                        break;
+                    }
+            case '*':{
+                        numberOutput[numberOutputCounter]=working[0]*working[1];        // overwrites the number and advances 1. equivalent of popping 2 off the stack and pushing one on.
+                        numberOutputCounter++;
+                        break;
+                    }
+            case '/':{
+                        numberOutput[numberOutputCounter]=working[0]/working[1];        // overwrites the number and advances 1. equivalent of popping 2 off the stack and pushing one on.
+                        numberOutputCounter++;
+                        break;
+                    }
+            case '^':{
+                        numberOutput[numberOutputCounter]=pow(working[0],working[1]);        // overwrites the number and advances 1. equivalent of popping 2 off the stack and pushing one on.
+                        numberOutputCounter++;
+                        break;
+                    }
             }
         }
     }
+    stackCounter--;
+    for(stackCounter;stackCounter>=0;stackCounter--)
+    {
+        functionOutput[functionOutputCounter]=stack[stackCounter];
+        functionOutputCounter++;
+    }
+    hold=functionOutputCounter;
+    functionOutputCounter=0;
+    while(hold>0 )
+        {
+            hold--;
+            numberOutputCounter--;                                                  // selects last number to be entered
+            working[1]=numberOutput[numberOutputCounter];
+            numberOutputCounter--;
+            working[0]=numberOutput[numberOutputCounter];
 
-    *functionCounter=fCounter;
-    *digitArray=variables;
-    *mathsFunctionArray=function;
+            switch(functionOutput[functionOutputCounter])
+            {
+            case '+':{
+                        numberOutput[numberOutputCounter]=working[0]+working[1];        // overwrites the number and advances 1. equivalent of popping 2 off the stack and pushing one on.
+                        numberOutputCounter++;
+                        break;
+                    }
+            case '-':{
+                        numberOutput[numberOutputCounter]=working[0]-working[1];        // overwrites the number and advances 1. equivalent of popping 2 off the stack and pushing one on.
+                        numberOutputCounter++;
+                        break;
+                    }
+            case '*':{
+                        numberOutput[numberOutputCounter]=working[0]*working[1];        // overwrites the number and advances 1. equivalent of popping 2 off the stack and pushing one on.
+                        numberOutputCounter++;
+                        break;
+                    }
+            case '/':{
+                        numberOutput[numberOutputCounter]=working[0]/working[1];        // overwrites the number and advances 1. equivalent of popping 2 off the stack and pushing one on.
+                        numberOutputCounter++;
+                        break;
+                    }
+            case '^':{
+                        numberOutput[numberOutputCounter]=pow(working[0],working[1]);        // overwrites the number and advances 1. equivalent of popping 2 off the stack and pushing one on.
+                        numberOutputCounter++;
+                        break;
+                    }
+            }
+            functionOutputCounter++;
+        }
+
+    int i;
+
+    for(i=0;i<numberOutputCounter;i++)
+    {
+        printf("%lf",numberOutput[i]);
+    }
     return(0);
 }

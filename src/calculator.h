@@ -7,3 +7,4 @@ int arithmetic(char *inputString);
 
 #endif // CALCULATOR_H_
 
+ 

@@ -1,30 +1,12 @@
-# Calculator-C
+# Basic Calculator written in C
 
+Symbols accepted are  +-/*^()
 
-MIT License
+To exit the program type EXIT at any time.
 
-Copyright (c) [2016] [Michael Jon O'Donnell]
+To go back to the previous menu type BACK at any time.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+The calculator has basic error support for letters/symbols which do nothing.
+Written words to dscribe action do not work eg sqrt(), cos() etc
+Trig is not supported
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-
-
-Basic calculator using (/*-+^). 
-The calculator currently does not have any error support for inputs
-which are notnumbers or the symbols listed above. 

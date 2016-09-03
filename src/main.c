@@ -6,69 +6,76 @@
 *   (+/-*^)
 *************************************/
 
-/* ******************************************
-MIT License
-
-Copyright (c) [2016] [Michael Jon O'Donnell]
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-*****************************************************/
 
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <math.h>
+#include <string.h>
 #include "calculator.h"
+
+
+// Defines operation positions in the modes array.
+// Used for ease of reading
+enum modes
+{
+    EXIT, Exit, BACK,
+    back, ARITH, arith
+};
 
 int main()
 {
-    char input[100]={'\0'}, *inputString=NULL;
+    // Defines operation modes
+    static const char *Modes[]=
+    {
+        "EXIT","exit","BACK",
+        "back","ARITH","arith"
+    };
 
-    while(input[0]!='E' && input[1]!='X' && input[2]!='I' && input[3]!='T')
+
+    char input[100]={'\0'}, *inputString=NULL;
+    int i;
+
+    do
     {
         printf("To exit type EXIT.\nTo perform arithmetic type ARITH\nTo go back type BACK\n");
 
-
+        // Get user input then remove the newline symbol
         fgets(input, sizeof(input),stdin);
+        for(i=0;i<100;i++)
+        {
+            if(input[i]=='\n'){input[i]='\0';   break;}
+        }
+
         inputString=input;
 
-        if(input[0]=='A' && input[1]=='R' && input[2]=='I' && input[3]=='T' && input[4]=='H')
+        // Compare the Input to modes. If true performs arithmetic.
+        if(strcmp(Modes[ARITH],inputString)==0 || strcmp(Modes[arith],inputString)==0)
         {
             printf("Enter equation\n");
-            while(input[0]!='B' && input[1]!='A' && input[2]!='C' && input[3]!='K')
+            do
             {
                 fgets(input, sizeof(input),stdin);
+                for(i=0;i<100;i++)
+                {
+                    if(input[i]=='\n'){input[i]='\0';   break;}
+                }
                 inputString=input;
-                if(input[0]=='E' && input[1]=='X' && input[2]=='I' && input[3]=='T')
+
+                // Allows for exit of program without returning to the first menu
+                if(strcmp(Modes[EXIT],inputString)==0 || strcmp(Modes[Exit],inputString)==0)
                 {
                     break;
                 }
+                      arithmetic(inputString);
 
-                    arithmetic(inputString);
 
-            }
+            // Returns to previous menu if back is entered
+            }while(strcmp(Modes[BACK],inputString)!=0 &&  strcmp(Modes[back],inputString)!=0);
         }
 
-    }
-
-
+    }while(strcmp(Modes[EXIT],inputString)!=0 && strcmp(Modes[Exit],inputString)!=0);
 
 
     return(0);

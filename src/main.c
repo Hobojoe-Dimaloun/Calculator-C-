@@ -7,7 +7,6 @@
 *************************************/
 
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -51,7 +50,7 @@ int main()
         inputString=input;
 
         // Compare the Input to modes. If true performs arithmetic.
-        if(strcmp(Modes[ARITH],inputString)==0 || strcmp(Modes[arith],inputString)==0)
+        if(strncmp(Modes[ARITH],inputString,5)==0 || strncmp(Modes[arith],inputString,5)==0)
         {
             printf("Enter equation\n");
             do
@@ -64,7 +63,7 @@ int main()
                 inputString=input;
 
                 // Allows for exit of program without returning to the first menu
-                if(strcmp(Modes[EXIT],inputString)==0 || strcmp(Modes[Exit],inputString)==0)
+                if(strncmp(Modes[EXIT],inputString,4)==0 || strncmp(Modes[Exit],inputString,4)==0)
                 {
                     break;
                 }
@@ -72,10 +71,10 @@ int main()
 
 
             // Returns to previous menu if back is entered
-            }while(strcmp(Modes[BACK],inputString)!=0 &&  strcmp(Modes[back],inputString)!=0);
+            }while(strncmp(Modes[BACK],inputString,4)!=0 &&  strncmp(Modes[back],inputString,4)!=0);
         }
 
-    }while(strcmp(Modes[EXIT],inputString)!=0 && strcmp(Modes[Exit],inputString)!=0);
+    }while(strncmp(Modes[EXIT],inputString,4)!=0 && strncmp(Modes[Exit],inputString,4)!=0);
 
 
     return(0);

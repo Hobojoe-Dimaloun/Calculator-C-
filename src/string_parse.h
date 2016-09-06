@@ -3,11 +3,13 @@
 
 #include <stdio.h>
 
+int trigonometryLetterRead(char **inputString, char **stack,int *stackcounter );
+
 double numberRead(char **inputString);
 
-int constantsLetterRead(char **inputString);
+double constantsLetterRead(char **inputString);
 
-int bannedLetterRead();
+void symbolRead(char **inputString, char **stack, char *functionOutput[],int *stack_Counter,int *function_Output_Counter);
 
 
 #endif // STRING_PARSE_H_

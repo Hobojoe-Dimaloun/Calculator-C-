@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-int trigonometryLetterRead(char **inputString, char **stack,int *stackcounter );
+int functionLetterRead(char **inputString, char **stack,int *stackcounter );
 
 double numberRead(char **inputString);
 
